@@ -1,4 +1,2 @@
-package com.example.tg_navegacionpantallas.ui.screens.inicio
+package com.example.tg_navegacionpantallas.ui.screens.detalles
 
-class CarritoScreen {
-}
