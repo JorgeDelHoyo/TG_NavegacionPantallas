@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.tg_navegacionpantallas.data.model.Vivienda
 import com.example.tg_navegacionpantallas.ui.screens.bienvenida.BienvenidaScreen
+import com.example.tg_navegacionpantallas.ui.screens.carrito.CarritoScreen
 import com.example.tg_navegacionpantallas.ui.screens.denegado.DenegadoScreen
 import com.example.tg_navegacionpantallas.ui.screens.detalles.DetallesScreen
 import com.example.tg_navegacionpantallas.ui.screens.inicio.InicioScreen
@@ -46,19 +47,29 @@ fun NavGraph(navController: NavHostController) { // <--- CAMBIO CLAVE: Recibe el
             )
         }
 
-        // DETALLES
+        // RUTA DETALLES
         composable(
             route = "detalles/{id}",
             arguments = listOf(navArgument("id") { type = NavType.IntType })
         ) { backStackEntry ->
             val id = backStackEntry.arguments?.getInt("id") ?: 0
+
             DetallesScreen(
                 idVivienda = id,
-                onComprar = { casa ->
-                    carritoDeCompras.add(casa)
+                onVolver = { navController.popBackStack() }, // Botón volver funciona aquí
+                onComprar = { vivienda, cantidad ->
+
+                    // 1. Creamos una copia de la vivienda con la cantidad correcta
+                    // (Importante: tu data class Vivienda debe tener val cantidad: Int)
+                    val viviendaConCantidad = vivienda.copy(cantidad = cantidad)
+
+                    // 2. La añadimos al carrito
+                    carritoDeCompras.add(viviendaConCantidad)
+
+                    // 3. Confirmación en consola y vuelta atrás
+                    println("Añadido al carrito: ${vivienda.modelo} (x$cantidad)")
                     navController.popBackStack()
-                },
-                onVolver = { navController.popBackStack() }
+                }
             )
         }
 
@@ -67,10 +78,20 @@ fun NavGraph(navController: NavHostController) { // <--- CAMBIO CLAVE: Recibe el
             DenegadoScreen(onVolver = { navController.popBackStack() })
         }
 
-        // CARRITO (Placeholder para que no falle el botón del menú)
+        // RUTA CARRITO (ACTUALIZAR ESTO)
         composable(Destinos.Carrito.ruta) {
-            // CarritoScreen(...)
-            androidx.compose.material3.Text("Pantalla de Carrito (En construcción)")
+            CarritoScreen(
+                listaViviendas = carritoDeCompras, // Pasamos la lista llena
+                onFinalizarCompra = {
+                    // Acción: Vaciar el carrito
+                    carritoDeCompras.clear()
+
+                    // Opcional: Navegar a inicio tras comprar
+                    navController.navigate(Destinos.Inicio.ruta) {
+                        popUpTo(Destinos.Inicio.ruta) { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }

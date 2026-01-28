@@ -106,16 +106,6 @@ fun InicioScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // Botón de Vuelta Atrás
-            OutlinedButton(
-                onClick = onVolverAtras,
-                modifier = Modifier.weight(1f)
-            ) {
-                Icon(Icons.Default.ArrowBack, contentDescription = null)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Atrás")
-            }
-
             Spacer(modifier = Modifier.width(16.dp))
 
             // Botón de Confirmación -> Hacia Detalles
