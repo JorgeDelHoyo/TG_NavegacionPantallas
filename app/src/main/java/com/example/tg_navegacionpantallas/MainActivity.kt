@@ -1,6 +1,7 @@
 package com.example.tg_navegacionpantallas
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -34,10 +35,27 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             // Luego mostramos la pantalla usando esa lista
-            PantallaPruebaDatos(viviendas = ViviendaProvider.listaViviendas)
+            Text("revisa Logcat")
         }
     }
-}
+    private fun verificarCargaJson() {
+        // 1. Ejecutamos la carga usando tu Provider
+        ViviendaProvider.cargarDesdeJson(this)
+
+        // 2. Comprobamos si la lista tiene datos
+        val lista = ViviendaProvider.listaViviendas
+
+        if (lista.isNotEmpty()) {
+            Log.d("PRUEBA_JSON", "¡ÉXITO! Se han cargado ${lista.size} viviendas.")
+
+            // 3. Imprimimos las 3 primeras para ver que los campos están bien
+            lista.take(3).forEach { vivienda ->
+                Log.d("PRUEBA_JSON", "--> Vivienda ID ${vivienda.id}: ${vivienda.modelo} - ${vivienda.precio}€")
+            }
+        } else {
+            Log.e("PRUEBA_JSON", "ERROR: La lista está vacía. Revisa el nombre del archivo en assets.")
+        }
+    }}
 
 @Composable
 fun PantallaPruebaDatos(viviendas: List<Vivienda>) {
