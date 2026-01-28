@@ -1,3 +1,5 @@
+package com.example.tg_navegacionpantallas.data.repository
+
 import android.content.Context
 import com.example.tg_navegacionpantallas.data.model.Vivienda
 import kotlinx.serialization.json.Json
@@ -26,6 +28,7 @@ object ViviendaProvider {
 
         } catch (e: Exception) {
             // Si hay un error, lo veremos en el Logcat de Android Studio
+            android.util.Log.e("PUEBA_JSON", "!BOOM! Error leyendo JSON: ${e.message}")
             e.printStackTrace()
             listaViviendas = emptyList()
         }

@@ -2,7 +2,10 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    // Serializable (version fallo)
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.0"
 }
+
 
 android {
     namespace = "com.example.tg_navegacionpantallas"

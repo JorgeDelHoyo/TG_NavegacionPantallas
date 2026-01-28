@@ -11,5 +11,5 @@ data class Vivienda(
     val metros: Int,
     val cantidad: Int,
     val precio: Double,
-    val imagenResId: String
+    val imagen: String
 )
