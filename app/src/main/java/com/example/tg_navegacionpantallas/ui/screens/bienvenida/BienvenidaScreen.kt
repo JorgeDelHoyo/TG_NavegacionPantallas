@@ -1,44 +1,93 @@
 package com.example.tg_navegacionpantallas.ui.screens.bienvenida
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 
+
+//Pide edad y verifica ley
 @Composable
 fun BienvenidaScreen(
-    onEntrar: () -> Unit,    // Callback si es mayor de edad
-    onDenegado: () -> Unit   // Callback si es menor
-) {
-    var edad by remember { mutableStateOf("") }
+    onEntrar:() -> Unit,
+    onDenegado: () -> Unit
+){
+
+    var edadInput by remember { mutableStateOf("") }
+    var resultadoMensaje by remember { mutableStateOf("") }
+    //Booleano para saber si hay un error
+    var esError by remember {mutableStateOf(false)}
+
 
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
-    ) {
-        Text("Bienvenido a Inmobiliaria")
+    ){
+        Text(
+            text = "Bienvenid@, ingrese su edad para continuar."
+        )
         Spacer(modifier = Modifier.height(16.dp))
-
         OutlinedTextField(
-            value = edad,
-            onValueChange = { edad = it },
-            label = { Text("Introduce tu edad") }
+            value = edadInput,
+            onValueChange = { edadInput = it},
+            isError = esError // Si hay un error pone el borde rojo, ta guapo
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(onClick = {
-            val edadNum = edad.toIntOrNull() ?: 0
-            if (edadNum >= 18) {
-                onEntrar() // Navega a inicio
-            } else {
-                onDenegado() // Navega a pantalla de bloqueo
-            }
-        }) {
-            Text("Entrar")
+        if (resultadoMensaje.isNotEmpty()) {
+            Text (
+                text = resultadoMensaje
+            )
+            Spacer(modifier = Modifier.height(16.dp))
         }
-    }
-}
+
+        Button(
+            onClick = {
+                /**
+                 * Como el textField siempre da un String,
+                 * se convierte el valor a Int, si no es un número
+                 * se asigna un 0*/
+                var edadSinEspacios = edadInput.trim()
+                //Si se introduce un valor distinto a un Int, se convierte en null.
+                var edadInt = edadSinEspacios.toIntOrNull()
+
+                //Comprobación de texto
+                if(edadInput.isEmpty()) {
+                    resultadoMensaje = "El campo está vacío"
+                    esError = true
+                } else if (edadInt == null) {
+                    resultadoMensaje = "Debe de introducir un número válido"
+                    esError = true
+                } else {
+                    esError = false
+                    if (edadInt >= 18) {
+                        onEntrar()
+                    } else {
+                        onDenegado()
+                    }
+                }
+            } //End onClick
+        ){
+            Text("Entrar")
+        } //End Button
+    } //End Column
+
+} //End BienvenidaScreen
