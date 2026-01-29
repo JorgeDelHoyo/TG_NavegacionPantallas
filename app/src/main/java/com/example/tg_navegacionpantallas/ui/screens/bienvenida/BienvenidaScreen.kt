@@ -1,7 +1,12 @@
 package com.example.tg_navegacionpantallas.ui.screens.bienvenida
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -9,13 +14,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 
 //Pide edad y verifica ley
 @Composable
-fun BienvenidaScreen(navController: NavController){
+fun BienvenidaScreen(
+    onEntrar:() -> Unit,
+    onDenegado: () -> Unit
+){
 
     var edadInput by remember { mutableStateOf("") }
     var resultadoMensaje by remember { mutableStateOf("") }
@@ -23,15 +35,29 @@ fun BienvenidaScreen(navController: NavController){
     var esError by remember {mutableStateOf(false)}
 
 
-    Column(){
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ){
         Text(
             text = "Bienvenid@, ingrese su edad para continuar."
         )
-        TextField(
+        Spacer(modifier = Modifier.height(16.dp))
+        OutlinedTextField(
             value = edadInput,
             onValueChange = { edadInput = it},
             isError = esError // Si hay un error pone el borde rojo, ta guapo
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        if (resultadoMensaje.isNotEmpty()) {
+            Text (
+                text = resultadoMensaje
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+        }
 
         Button(
             onClick = {
@@ -53,21 +79,15 @@ fun BienvenidaScreen(navController: NavController){
                 } else {
                     esError = false
                     if (edadInt >= 18) {
-                        navController.navigate("inicio/InicioScreen.kt")
+                        onEntrar()
                     } else {
-                        navController.navigate("/denegado/DenegadoScreen.kt")
+                        onDenegado()
                     }
                 }
             } //End onClick
         ){
             Text("Entrar")
         } //End Button
-
-        if (resultadoMensaje.isNotEmpty()) {
-            Text (
-                text = resultadoMensaje
-            )
-        }
     } //End Column
 
 } //End BienvenidaScreen
