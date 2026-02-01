@@ -20,28 +20,29 @@ import com.example.tg_navegacionpantallas.data.model.Vivienda
 
 @Composable
 fun CarritoScreen(
-    listaViviendas: List<Vivienda>,
-    onFinalizarCompra: () -> Unit
+    listaViviendas: List<Vivienda>, // Lista llena desde NavGraph
+    onFinalizarCompra: () -> Unit // Callback para limpiar el carrito al finalizar la compra
 ) {
-    // 1. CÁLCULOS DEL ENUNCIADO
+    // Variables que calculan el precio y la cantidad de items añadidos al carrito
     val cantidadTotalItems = remember(listaViviendas) { listaViviendas.sumOf { it.cantidad } }
     val precioTotal = remember(listaViviendas) { listaViviendas.sumOf { it.precio * it.cantidad } }
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-
         Text("Resumen del Pedido", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(16.dp))
 
-        // --- TARJETA DE RESUMEN (Cumpliendo el enunciado) ---
+        // Tarjeta del item añadido al carrito con detalles
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
+                // Fila de cantidad
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text("Cantidad de ítems:", style = MaterialTheme.typography.bodyLarge)
                     Text("$cantidadTotalItems", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                 }
+                // Fila de Precio Total
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text("Precio Total:", style = MaterialTheme.typography.bodyLarge)
@@ -52,12 +53,12 @@ fun CarritoScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // --- LISTA DE DETALLES ---
+        // Lista de los detalles
         Text("Detalle:", style = MaterialTheme.typography.titleMedium)
 
         if (listaViviendas.isEmpty()) {
             Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                Text("El carrito está vacío")
+                Text("El carrito está vacío") // Aviso si la lista está vacía
             }
         } else {
             LazyColumn(
@@ -73,6 +74,7 @@ fun CarritoScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Botón para procesar la compra y limpiar la lista
         Button(
             onClick = onFinalizarCompra,
             modifier = Modifier.fillMaxWidth(),
@@ -94,12 +96,13 @@ fun ItemCarrito(vivienda: Vivienda) {
             modifier = Modifier.fillMaxWidth().padding(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Imagen pequeña (Clase R)
+            // Imagen dinámica asociada la ID del JSON
             val context = LocalContext.current
             val resourceId = remember(vivienda.imagen) {
                 context.resources.getIdentifier(vivienda.imagen, "drawable", context.packageName)
             }
 
+            // Si no hay imagen muestra una casita
             if (resourceId != 0) {
                 Image(
                     painter = painterResource(id = resourceId),
@@ -113,9 +116,10 @@ fun ItemCarrito(vivienda: Vivienda) {
 
             Spacer(modifier = Modifier.width(16.dp))
 
+            // Datos del item
             Column {
                 Text(vivienda.modelo, fontWeight = FontWeight.Bold)
-                Text("${vivienda.cantidad} x ${vivienda.precio} €")
+                Text("${vivienda.cantidad} x ${vivienda.precio} €") // Cantidad x Precio/ud
             }
         }
     }

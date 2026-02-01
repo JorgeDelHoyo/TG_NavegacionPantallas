@@ -1,7 +1,6 @@
 package com.example.tg_navegacionpantallas.ui.screens.inicio
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,7 +8,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
@@ -32,11 +30,12 @@ fun InicioScreen(
     onNavegarDetalles: (Int) -> Unit, // Acción del botón confirmar
     onVolverAtras: () -> Unit         // Acción del botón volver
 ) {
-    // ESTADOS
+    // Variable para lo que escribe en el filtro el usuario
     var textoFiltro by remember { mutableStateOf("") }
+    // Variable para guardar el objeto que el usuario ha seleccionado pero no confirmado
     var viviendaSeleccionada by remember { mutableStateOf<Vivienda?>(null) }
 
-    // LÓGICA DE FILTRO (Requisito: Filtrar lista)
+    // Cuando cambia textoFiltro, se recalcula y cambia
     val listaFiltrada = ViviendaProvider.listaViviendas.filter {
         it.modelo.contains(textoFiltro, ignoreCase = true)
     }
@@ -46,12 +45,12 @@ fun InicioScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // --- 1. CAMPO DE FILTRO (Requisito) ---
+        // Filtro
         OutlinedTextField(
             value = textoFiltro,
             onValueChange = {
                 textoFiltro = it
-                viviendaSeleccionada = null // Opcional: Deseleccionar al filtrar
+                viviendaSeleccionada = null // Deseleccionar al filtrar
             },
             label = { Text("Buscar por modelo...") },
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
@@ -60,16 +59,17 @@ fun InicioScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // --- 2. LISTA DE ITEMS A SELECCIONAR (Requisito) ---
+        // Lista de items filtrados
         Text("Resultados: ${listaFiltrada.size}", style = MaterialTheme.typography.labelLarge)
 
         LazyColumn(
             modifier = Modifier
-                .weight(1f) // Ocupa todo el espacio disponible en medio
+                .weight(1f)
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(listaFiltrada) { vivienda ->
+                // Comprobar que la vivienda es la seleccionada actualmente
                 val esSeleccionada = vivienda == viviendaSeleccionada
 
                 ItemSeleccionable(
@@ -82,15 +82,14 @@ fun InicioScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Divider()
-
-        // --- 3. CAMPO TEXTO INDICANDO SELECCIÓN (Requisito) ---
+        // Campo de texto
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp)
         ) {
             Text("Vivienda Seleccionada:", style = MaterialTheme.typography.labelMedium)
+            // Mostrar nombre o placeholder si es null
             Text(
                 text = viviendaSeleccionada?.modelo ?: "Ninguna seleccionada",
                 style = MaterialTheme.typography.titleMedium,
@@ -101,7 +100,7 @@ fun InicioScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // --- 4. BOTONES (Requisito: Confirmación y Vuelta) ---
+        // Botones
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -119,22 +118,25 @@ fun InicioScreen(
             ) {
                 Text("Ver Detalles")
                 Spacer(modifier = Modifier.width(8.dp))
-                Icon(Icons.Default.Check, contentDescription = null)
+                Icon(Icons.Default.Check, contentDescription = "Check")
             }
         }
 
-        // Espacio para la BottomBar si la usas
+        // Espacio para que la BottomBar no tape contenido
         Spacer(modifier = Modifier.height(60.dp))
     }
 }
 
+/**
+ * Componente auxiliar para pintar la fila
+ */
 @Composable
 fun ItemSeleccionable(
     vivienda: Vivienda,
     seleccionada: Boolean,
     onClick: () -> Unit
 ) {
-    // Cambiamos el color de fondo si está seleccionada para dar feedback visual
+    // Cambiamos el color de fondo si está seleccionado
     val backgroundColor = if (seleccionada) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface
     val borderColor = if (seleccionada) MaterialTheme.colorScheme.primary else Color.Transparent
 
@@ -152,7 +154,7 @@ fun ItemSeleccionable(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Miniatura de la imagen (Recuperada de resources)
+            // Miniatura de la imagen
             val context = LocalContext.current
             val resourceId = remember(vivienda.imagen) {
                 context.resources.getIdentifier(vivienda.imagen, "drawable", context.packageName)

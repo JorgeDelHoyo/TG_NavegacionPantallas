@@ -27,11 +27,12 @@ import com.example.tg_navegacionpantallas.data.repository.ViviendaProvider
 
 @Composable
 fun DetallesScreen(
-    idVivienda: Int,
+    idVivienda: Int, // ID de la vivienda
     onComprar: (Vivienda, Int) -> Unit,
     onVolver: () -> Unit // Se mantiene por compatibilidad, aunque lo usa la TopBar
 ) {
     // 1. Buscamos la vivienda
+    // Sin remember buscaría más de una vez cada que se escribe
     val vivienda = remember(idVivienda) {
         ViviendaProvider.listaViviendas.find { it.id == idVivienda }
     }
@@ -44,10 +45,10 @@ fun DetallesScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
-                .verticalScroll(rememberScrollState()) // Scroll habilitado
+                .verticalScroll(rememberScrollState()) // Scroll
         ) {
 
-            // --- IMAGEN ---
+            // Imagen dinámica
             val context = LocalContext.current
             val resourceId = remember(vivienda.imagen) {
                 context.resources.getIdentifier(
@@ -65,6 +66,7 @@ fun DetallesScreen(
                     .background(Color.LightGray),
                 contentAlignment = Alignment.Center
             ) {
+                // Si encuentra la imagen la pinta sino muestra el icono de la casita
                 if (resourceId != 0) {
                     Image(
                         painter = painterResource(id = resourceId),
@@ -82,7 +84,7 @@ fun DetallesScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // --- TÍTULO Y PRECIO ---
+            // Titulo y precio de la vivienda
             Text(
                 text = vivienda.modelo,
                 style = MaterialTheme.typography.headlineMedium,
@@ -98,7 +100,7 @@ fun DetallesScreen(
 
             Divider(modifier = Modifier.padding(vertical = 16.dp))
 
-            // --- DETALLES ---
+            // Detalles de la vivienda
             Text("Características:", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(8.dp))
             Text("• Superficie: ${vivienda.metros} m²")
@@ -106,13 +108,13 @@ fun DetallesScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // --- INPUT CANTIDAD ---
+            // Inputa para la cantidad
             Text("Indicar cantidad:", style = MaterialTheme.typography.labelLarge)
 
             OutlinedTextField(
                 value = cantidadInput,
                 onValueChange = {
-                    // Validación numérica
+                    // Validación numérica solo si lo introducido son digitos
                     if (it.all { char -> char.isDigit() }) {
                         cantidadInput = it
                     }
@@ -133,6 +135,7 @@ fun DetallesScreen(
                     }
                 },
                 modifier = Modifier.fillMaxWidth().height(50.dp),
+                // Deshabilitar el botón si el campo está vacio o es 0
                 enabled = cantidadInput.isNotEmpty() && cantidadInput != "0"
             ) {
                 Icon(Icons.Default.ShoppingCart, contentDescription = null)
@@ -140,7 +143,6 @@ fun DetallesScreen(
                 Text("Añadir al Carrito")
             }
 
-            // Espacio final
             Spacer(modifier = Modifier.height(80.dp))
         }
     } else {

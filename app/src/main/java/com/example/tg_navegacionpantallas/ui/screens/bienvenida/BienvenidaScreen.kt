@@ -21,17 +21,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
-
-//Pide edad y verifica ley
 @Composable
 fun BienvenidaScreen(
+    // Elevación de estado en ambas variables
     onEntrar:() -> Unit,
     onDenegado: () -> Unit
 ){
-
+    // Estados para guardar lo que escribe el usuario y los mensajes de feedback
     var edadInput by remember { mutableStateOf("") }
     var resultadoMensaje by remember { mutableStateOf("") }
-    //Booleano para saber si hay un error
+
+    // Variable para controlar el Textfield en rojo
     var esError by remember {mutableStateOf(false)}
 
 
@@ -47,11 +47,12 @@ fun BienvenidaScreen(
         OutlinedTextField(
             value = edadInput,
             onValueChange = { edadInput = it},
-            isError = esError // Si hay un error pone el borde rojo, ta guapo
+            isError = esError // Si hay un error pone el borde rojo
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Solo mostramos texto error si hay algo escrito
         if (resultadoMensaje.isNotEmpty()) {
             Text (
                 text = resultadoMensaje
@@ -69,12 +70,12 @@ fun BienvenidaScreen(
                 //Si se introduce un valor distinto a un Int, se convierte en null.
                 var edadInt = edadSinEspacios.toIntOrNull()
 
-                //Comprobación de texto
+                //Comprobar de texto
                 if(edadInput.isEmpty()) {
-                    resultadoMensaje = "El campo está vacío"
+                    resultadoMensaje = "Error!!. El campo está vacío"
                     esError = true
                 } else if (edadInt == null) {
-                    resultadoMensaje = "Debe de introducir un número válido"
+                    resultadoMensaje = "Error!!. Debe de introducir un número válido"
                     esError = true
                 } else {
                     esError = false

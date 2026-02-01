@@ -17,13 +17,13 @@ import androidx.navigation.compose.rememberNavController
 import com.example.tg_navegacionpantallas.data.repository.ViviendaProvider
 import com.example.tg_navegacionpantallas.navigation.Destinos
 import com.example.tg_navegacionpantallas.navigation.NavGraph
-//import com.example.tg_navegacionpantallas.ui.theme.Tg_NavegacionPantallasTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ViviendaProvider.cargarDesdeJson(this) // Carga de datos
-
+        // Primero carga Datos
+        ViviendaProvider.cargarDesdeJson(this)
+        // Después se muestra
         setContent {
             MaterialTheme {
                 MainScreen()
@@ -37,25 +37,18 @@ class MainActivity : ComponentActivity() {
 fun MainScreen() {
     val navController = rememberNavController()
 
-    // Detectamos la ruta actual
+    // Variable para detectar la pantalla actual
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    // --- CONFIGURACIÓN DE VISIBILIDAD ---
-
-    // 1. ¿Dónde mostramos las barras (Top y Bottom)?
-    // En todas partes MENOS en Bienvenida y Denegado
+    // Solo se muestra la topBar y la bottomBar si no es Bienvenida o Denegado
     val mostrarBarras = currentRoute != Destinos.Bienvenida.ruta &&
             currentRoute != Destinos.Denegado.ruta
 
-    // 2. ¿Cuándo mostramos la flecha de volver?
-    // SIEMPRE que haya barras (es decir, en Inicio, Detalles y Carrito)
-    // - En Inicio: Volverá a Bienvenida.
-    // - En Detalles/Carrito: Volverá a Inicio.
+    // Variable para mostrar las flechas de "volver" en las pantallas determinadas
     val mostrarFlechaAtras = mostrarBarras
 
     Scaffold(
-        // --- TOP BAR (Con botón de retorno SIEMPRE) ---
         topBar = {
             if (mostrarBarras) {
                 CenterAlignedTopAppBar(
@@ -77,25 +70,23 @@ fun MainScreen() {
             }
         },
 
-        // --- BOTTOM BAR (Navegación entre Home y Carrito) ---
         bottomBar = {
             if (mostrarBarras) {
                 NavigationBar {
-                    // Botón INICIO
+                    // Botón Inicio
                     NavigationBarItem(
                         icon = { Icon(Icons.Default.Home, contentDescription = "Inicio") },
                         label = { Text("Inicio") },
-                        // Se marca si estamos en Inicio O en Detalles (para saber que venimos de ahí)
+                        // Se marca si estamos en Inicio o Detalles
                         selected = currentRoute == Destinos.Inicio.ruta || currentRoute?.startsWith("detalles") == true,
                         onClick = {
-                            // Navegar a inicio limpiando la pila para evitar bucles
+                            // Navegar a inicio limpiando la pila para evitar bucles si pulsas mucho el botón
                             navController.navigate(Destinos.Inicio.ruta) {
                                 popUpTo(Destinos.Inicio.ruta) { inclusive = true }
                             }
                         }
                     )
-
-                    // Botón CARRITO
+                    // Botón Carrito
                     NavigationBarItem(
                         icon = { Icon(Icons.Default.ShoppingCart, contentDescription = "Carrito") },
                         label = { Text("Carrito") },
@@ -110,7 +101,7 @@ fun MainScreen() {
             }
         }
     ) { innerPadding ->
-        // Contenido principal con padding para no chocar con las barras
+        // Padding para no cortar el contenido
         Surface(modifier = Modifier.padding(innerPadding)) {
             NavGraph(navController = navController)
         }
