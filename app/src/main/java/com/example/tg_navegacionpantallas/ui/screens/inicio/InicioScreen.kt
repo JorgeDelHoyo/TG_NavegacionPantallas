@@ -28,7 +28,8 @@ import com.example.tg_navegacionpantallas.data.repository.ViviendaProvider
 @Composable
 fun InicioScreen(
     onNavegarDetalles: (Int) -> Unit, // Acción del botón confirmar
-    onVolverAtras: () -> Unit         // Acción del botón volver
+    onVolverAtras: () -> Unit,        // Acción del botón volver
+    onIrExtra: () -> Unit             // Botón extra
 ) {
     // Variable para lo que escribe en el filtro el usuario
     var textoFiltro by remember { mutableStateOf("") }
@@ -124,6 +125,15 @@ fun InicioScreen(
 
         // Espacio para que la BottomBar no tape contenido
         Spacer(modifier = Modifier.height(60.dp))
+
+        // Pantalla extra
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(
+            onClick = onIrExtra,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = "Ver Extra")
+        }
     }
 }
 

@@ -18,4 +18,7 @@ sealed class Destinos(val ruta: String) {
         // Función de ayuda para crear la ruta fácilmente: Destinos.Detalles.crearRuta(5)
         fun crearRuta(id: Int) = "detalles/$id"
     }
+
+    // Pantalla extra
+    object Extra : Destinos ("extra")
 }
