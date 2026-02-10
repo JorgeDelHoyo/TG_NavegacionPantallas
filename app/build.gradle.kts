@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    //dependencia para kapt
+    id("org.jetbrains.kotlin.kapt")
     // Serializable (version fallo)
     id("org.jetbrains.kotlin.plugin.serialization") version "1.9.0"
 }
@@ -62,4 +64,15 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    // Dependencias de Room
+    implementation ("androidx.room:room-runtime:2.5.2")
+    kapt ("androidx.room:room-compiler:2.5.2")
+    implementation ("androidx.room:room-ktx:2.5.2") // Para extensiones Kotlin y soporte de Coroutines
+
+    // Dependencias de Jetpack Compose
+    implementation ("androidx.compose.ui:ui:1.4.3")
+    implementation ("androidx.compose.material:material:1.4.3")
+    implementation ("androidx.compose.runtime:runtime-livedata:1.4.3") // Para soporte de LiveData en Compose
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1") // Para integración con ViewModel
+
 }
