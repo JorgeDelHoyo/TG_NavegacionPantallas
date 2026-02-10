@@ -19,6 +19,4 @@ sealed class Destinos(val ruta: String) {
         fun crearRuta(id: Int) = "detalles/$id"
     }
 
-    // Pantalla extra
-    object Extra : Destinos ("extra")
 }

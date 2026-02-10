@@ -3,38 +3,33 @@ package com.example.tg_navegacionpantallas.data.repository
 import android.content.Context
 import com.example.tg_navegacionpantallas.data.model.Vivienda
 import kotlinx.serialization.json.Json
+import android.util.Log // Importante para el Log.e
 
 object ViviendaProvider {
 
-    // Variable donde las pantallas leen datos
-    var listaViviendas: List<Vivienda> = emptyList()
-
-    // Configuración para que no falle por errores tontos de formato
+    // Configuración JSON (se mantiene igual)
     private val jsonConfig = Json {
         ignoreUnknownKeys = true
         coerceInputValues = true
     }
 
-    fun cargarDesdeJson(context: Context) {
-        try {
-            // Leemos el archivo
+    // CAMBIO: Ahora la función devuelve List<Vivienda>
+    // Ya no guarda nada en una variable interna, solo lee y entrega.
+    fun cargarDesdeJson(context: Context): List<Vivienda> {
+        return try {
             val jsonString = context.assets.open("viviendas.json")
                 .bufferedReader()
                 .use { it.readText() }
 
-            // Convertimos de texto plano a lista de objetos
-            listaViviendas = jsonConfig.decodeFromString<List<Vivienda>>(jsonString)
+            val lista = jsonConfig.decodeFromString<List<Vivienda>>(jsonString)
 
-            // Log de depuración para verificar la carga
-            println("DEBUG: Se han cargado ${listaViviendas.size} viviendas")
+            Log.d("DEBUG", "Se han cargado ${lista.size} viviendas desde JSON")
+            lista // Devolvemos la lista
 
         } catch (e: Exception) {
-            // Si hay un error se captura el error
-            android.util.Log.e("DEBUG_JSON", "Error leyendo JSON: ${e.message}")
+            Log.e("DEBUG_JSON", "Error leyendo JSON: ${e.message}")
             e.printStackTrace()
-
-            // Lista vacía por seguridad
-            listaViviendas = emptyList()
+            emptyList() // Si falla, devolvemos lista vacía
         }
     }
 }

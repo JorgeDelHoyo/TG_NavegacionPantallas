@@ -14,7 +14,6 @@ import com.example.tg_navegacionpantallas.ui.screens.carrito.CarritoScreen
 import com.example.tg_navegacionpantallas.ui.screens.denegado.DenegadoScreen
 import com.example.tg_navegacionpantallas.ui.screens.detalles.DetallesScreen
 import com.example.tg_navegacionpantallas.ui.screens.inicio.InicioScreen
-import com.example.tg_navegacionpantallas.ui.screens.extra.ExtraScreen
 
 @Composable
 fun NavGraph(navController: NavHostController) {
@@ -45,9 +44,6 @@ fun NavGraph(navController: NavHostController) {
                 onVolverAtras = {
                     //Volver a la pantalla anterior
                     navController.popBackStack()
-                },
-                onIrExtra = {
-                    navController.navigate(Destinos.Extra.ruta)
                 }
             )
         }
@@ -100,11 +96,5 @@ fun NavGraph(navController: NavHostController) {
             )
         }
 
-        // Extra
-        composable (Destinos.Extra.ruta) {
-            ExtraScreen(
-                onVolver = { navController.popBackStack() }
-            )
-        }
     }
 }
