@@ -14,15 +14,38 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.tg_navegacionpantallas.data.db.AppDatabase
 import com.example.tg_navegacionpantallas.data.repository.ViviendaProvider
 import com.example.tg_navegacionpantallas.navigation.Destinos
 import com.example.tg_navegacionpantallas.navigation.NavGraph
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        // Primero carga Datos
+
+        // ------------------------------------------------------------------
+        // ZONA DE PRUEBA DE BASE DE DATOS (INICIO)
+        // ------------------------------------------------------------------
+
+        // Instanciamos la base de datos
+        val db = AppDatabase.getDatabase(this)
+
+        // Lanzamos un hilo secundario (Thread) porque no se puede tocar la BD en el hilo principal
+        Thread {
+            // Esta línea fuerza a la BD a abrirse y crear las tablas si no existen
+            println("DEBUG_DB: Intentando crear la base de datos...")
+            db.openHelper.readableDatabase
+            println("DEBUG_DB: ¡Base de datos y tablas creadas con éxito!")
+        }.start()
+
+        // ------------------------------------------------------------------
+        // ZONA DE PRUEBA DE BASE DE DATOS (FIN)
+        // ------------------------------------------------------------------
+
+
+        // Primero carga Datos (Tu código original del JSON)
         ViviendaProvider.cargarDesdeJson(this)
+
+        super.onCreate(savedInstanceState)
         // Después se muestra
         setContent {
             MaterialTheme {
