@@ -14,6 +14,7 @@ data class Vivienda(
     val metros: Int,
     val cantidad: Int,
     val precio: Double,
-    val imagen: String
-    // Si vas a añadir relaciones (propietarioId, etc.), añádelas aquí también
+    val imagen: String,
+
+    val propietarioId: Int? = null,
 )

@@ -4,11 +4,16 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.tg_navegacionpantallas.data.model.Propietario
 import com.example.tg_navegacionpantallas.data.model.Vivienda
 
-// Si añades más tablas (Propietario, etc), añádelas aquí en 'entities'
-@Database(entities = [Vivienda::class], version = 1)
+// SOLO 2 ENTIDADES POR AHORA
+@Database(
+    entities = [Vivienda::class, Propietario::class],
+    version = 1 // Si te da error, cambia a 2, 3... o borra la app del emulador
+)
 abstract class AppDatabase : RoomDatabase() {
+
     abstract fun viviendaDao(): ViviendaDao
 
     companion object {
@@ -21,7 +26,9 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "viviendas_db"
-                ).build().also { INSTANCE = it }
+                )
+                    .fallbackToDestructiveMigration() // Esto borra la BD antigua si cambias cosas, ideal para pruebas
+                    .build().also { INSTANCE = it }
             }
         }
     }

@@ -31,10 +31,36 @@ class MainActivity : ComponentActivity() {
 
         // Lanzamos un hilo secundario (Thread) porque no se puede tocar la BD en el hilo principal
         Thread {
-            // Esta línea fuerza a la BD a abrirse y crear las tablas si no existen
-            println("DEBUG_DB: Intentando crear la base de datos...")
-            db.openHelper.readableDatabase
-            println("DEBUG_DB: ¡Base de datos y tablas creadas con éxito!")
+            // 1. Limpieza inicial (opcional, para no llenar la BD si reinicias mucho)
+            db.clearAllTables()
+
+            // 2. Crear un Propietario de prueba
+            val nuevoPropietario = com.example.tg_navegacionpantallas.data.model.Propietario(
+                nombre = "Juan Pérez",
+                email = "juan@test.com",
+                telefono = "600123456"
+            )
+
+            // Necesitamos usar 'runBlocking' porque los métodos son suspend
+            kotlinx.coroutines.runBlocking {
+                // Guardamos al propietario y recuperamos su ID autogenerado
+                val idPropietario = db.viviendaDao().insertarPropietario(nuevoPropietario)
+                println("DEBUG_DB: Propietario creado con ID: $idPropietario")
+
+                // 3. Crear una Vivienda ASIGNADA a ese propietario
+                val nuevaVivienda = com.example.tg_navegacionpantallas.data.model.Vivienda(
+                    modelo = "Casa de Prueba",
+                    descripcion = "Probando relaciones",
+                    metros = 100,
+                    cantidad = 1,
+                    precio = 150000.0,
+                    imagen = "imagen1",
+                    propietarioId = idPropietario.toInt() // <--- AQUÍ ESTÁ LA MAGIA (La Relación)
+                )
+
+                db.viviendaDao().insertar(nuevaVivienda)
+                println("DEBUG_DB: Vivienda guardada y vinculada al propietario $idPropietario")
+            }
         }.start()
 
         // ------------------------------------------------------------------
