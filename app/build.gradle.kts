@@ -75,4 +75,7 @@ dependencies {
     implementation ("androidx.compose.runtime:runtime-livedata:1.4.3") // Para soporte de LiveData en Compose
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1") // Para integración con ViewModel
 
+    //Dependencias de retrofit (para la conexion con la API)
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 }
